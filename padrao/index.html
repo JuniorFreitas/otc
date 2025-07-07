@@ -637,10 +637,6 @@
             
             ['populacao', 'area', 'lugares'].forEach(id => {
                 const elemento = document.getElementById(id);
-                elemento.addEventListener('input', function() {
-                    clearTimeout(this.timeout);
-                    this.timeout = setTimeout(calcularIndices, 500);
-                });
             });
 
             document.addEventListener('keypress', function(e) {
