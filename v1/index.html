@@ -641,7 +641,6 @@
                     clearTimeout(this.timeout);
                     this.timeout = setTimeout(calcularIndices, 500);
                 });
-                elemento.addEventListener('change', calcularIndices);
             });
 
             document.addEventListener('keypress', function(e) {
