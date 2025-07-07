@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Calculadora OTC - Hub de Versões</title>
+    <title>Método LITA - Transporte Público - Hub de Versões</title>
     <style>
         * {
             margin: 0;
@@ -238,7 +238,7 @@
 <body>
     <div class="container">
         <div class="header">
-            <h1>🚌 Calculadora OTC</h1>
+            <h1>🚌 Método LITA - Transporte Público</h1>
             <p>Sistema de Avaliação de Índices de Transporte Público</p>
             <div class="version-badge">Hub de Versões</div>
         </div>
@@ -280,46 +280,6 @@
     </div>
 
     <script>
-        function abrirVersao(versao) {
-            // Simular navegação para diferentes versões
-            // Em um ambiente real, estes seriam links para arquivos diferentes
-            
-            const urls = {
-                'v1': 'calculadora-otc-v1.html',
-                'v2': 'calculadora-otc-v2.html', 
-                'v3': 'calculadora-otc-v3.html'
-            };
-
-            // Para demonstração, vamos mostrar um alerta
-            // Em produção, seria: window.location.href = urls[versao];
-            
-            const descricoes = {
-                'v1': 'Versão 1: Interface com tabela responsiva',
-                'v2': 'Versão 2: Interface com gráfico de barras',
-                'v3': 'Versão 3: Interface mobile com cards'
-            };
-
-            alert(`Navegando para ${descricoes[versao]}\n\nEm um ambiente real, isso abriria: ${urls[versao]}`);
-            
-            // Simular carregamento
-            const btn = event.target;
-            const textoOriginal = btn.textContent;
-            btn.textContent = 'Carregando...';
-            btn.style.opacity = '0.7';
-            
-            setTimeout(() => {
-                btn.textContent = textoOriginal;
-                btn.style.opacity = '1';
-                
-                // Aqui seria a navegação real:
-                // window.location.href = urls[versao];
-                
-                console.log(`Versão selecionada: ${versao}`);
-                console.log(`URL de destino: ${urls[versao]}`);
-            }, 1000);
-        }
-
-        // Adicionar efeitos visuais
         document.addEventListener('DOMContentLoaded', function() {
             const cards = document.querySelectorAll('.version-card');
             
