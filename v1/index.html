@@ -1,0 +1,663 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora OTC</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #f8f9fa;
+            padding: 10px;
+            line-height: 1.4;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border: 1px solid #ddd;
+            padding: 20px;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #333;
+            font-size: 1.8rem;
+        }
+
+        .section {
+            margin-bottom: 20px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 15px;
+        }
+
+        .section:last-child {
+            border-bottom: none;
+        }
+
+        h2 {
+            margin-bottom: 15px;
+            color: #555;
+            font-size: 1.2rem;
+        }
+
+        .form-row {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+
+        .input-group {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #333;
+            font-size: 0.9rem;
+        }
+
+        input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ccc;
+            font-size: 14px;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #007bff;
+        }
+
+        .btn {
+            padding: 8px 15px;
+            border: none;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .btn-primary {
+            background: #007bff;
+            color: white;
+        }
+
+        .btn-success {
+            background: #28a745;
+            color: white;
+        }
+
+        .btn-danger {
+            background: #dc3545;
+            color: white;
+            padding: 5px 10px;
+            font-size: 12px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+
+        th, td {
+            padding: 8px;
+            text-align: center;
+            border: 1px solid #ddd;
+            font-size: 0.9rem;
+        }
+
+        th {
+            background: #f8f9fa;
+            font-weight: bold;
+        }
+
+        .nivel {
+            padding: 3px 6px;
+            font-weight: bold;
+            color: white;
+            border-radius: 3px;
+        }
+
+        .nivel-A { background: #28a745; }
+        .nivel-B { background: #007bff; }
+        .nivel-C { background: #ffc107; color: black; }
+        .nivel-D { background: #fd7e14; }
+        .nivel-E { background: #dc3545; }
+        .nivel-F { background: #6c757d; }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .stat-card {
+            background: #f8f9fa;
+            padding: 10px;
+            text-align: center;
+            border: 1px solid #ddd;
+        }
+
+        .stat-value {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #007bff;
+        }
+
+        .stat-label {
+            font-size: 0.8rem;
+            color: #666;
+            margin-top: 3px;
+        }
+
+        .empty-message {
+            text-align: center;
+            padding: 20px;
+            color: #666;
+            font-style: italic;
+        }
+
+        .formula {
+            background: #f8f9fa;
+            padding: 10px;
+            margin: 5px 0;
+            border-left: 3px solid #007bff;
+            font-family: monospace;
+        }
+
+        .nivel-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .nivel-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+            
+            h1 {
+                font-size: 1.5rem;
+            }
+            
+            .form-row {
+                flex-direction: column;
+            }
+            
+            .input-group {
+                min-width: auto;
+            }
+            
+            table {
+                font-size: 0.8rem;
+            }
+            
+            th, td {
+                padding: 5px 3px;
+            }
+            
+            .stats {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .nivel-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 10px;
+            }
+            
+            h1 {
+                font-size: 1.3rem;
+            }
+            
+            th, td {
+                padding: 3px 2px;
+                font-size: 0.7rem;
+            }
+            
+            .stats {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Calculadora OTC - Transporte Público</h1>
+        
+        <!-- Parâmetros -->
+        <div class="section">
+            <h2>Parâmetros</h2>
+            <div class="form-row">
+                <div class="input-group">
+                    <label for="populacao">População</label>
+                    <input type="number" id="populacao" value="110150">
+                </div>
+                <div class="input-group">
+                    <label for="area">Área (hectares)</label>
+                    <input type="number" id="area" value="2540">
+                </div>
+                <div class="input-group">
+                    <label for="lugares">Lugares/Veículo</label>
+                    <input type="number" id="lugares" value="80">
+                </div>
+            </div>
+        </div>
+
+        <!-- Adicionar Linha -->
+        <div class="section">
+            <h2>Nova Linha</h2>
+            <div class="form-row">
+                <div class="input-group">
+                    <label for="nome">Nome</label>
+                    <input type="text" id="nome" placeholder="Ex: Centro">
+                </div>
+                <div class="input-group">
+                    <label for="kmRota">Km Rota</label>
+                    <input type="number" id="kmRota" step="0.001" placeholder="15.5">
+                </div>
+                <div class="input-group">
+                    <label for="paradas">Paradas</label>
+                    <input type="number" id="paradas" placeholder="25">
+                </div>
+                <div class="input-group">
+                    <label for="viagens">Viagens</label>
+                    <input type="number" id="viagens" placeholder="50">
+                </div>
+            </div>
+            <div style="text-align: center; margin-top: 15px;">
+                <button class="btn btn-success" id="btnAdicionar">Adicionar Linha</button>
+            </div>
+        </div>
+
+        <!-- Resultados -->
+        <div class="section">
+            <h2>Resultados</h2>
+            <div style="overflow-x: auto;">
+                <table id="tabelaResultados">
+                    <thead>
+                        <tr>
+                            <th>Linha</th>
+                            <th>Km</th>
+                            <th>Paradas</th>
+                            <th>Viagens</th>
+                            <th>Cobertura</th>
+                            <th>Capacidade</th>
+                            <th>Freq</th>
+                            <th>UX Cob</th>
+                            <th>UX Cap</th>
+                            <th>UX Freq</th>
+                            <th>OTC</th>
+                            <th>Nível</th>
+                            <th>Ação</th>
+                        </tr>
+                    </thead>
+                    <tbody id="corpoTabela">
+                        <tr>
+                            <td colspan="13" class="empty-message">Carregando...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Estatísticas -->
+        <div class="section" id="estatisticas" style="display: none;">
+            <h2>Estatísticas</h2>
+            <div class="stats">
+                <div class="stat-card">
+                    <div class="stat-value" id="mediaCobertura">-</div>
+                    <div class="stat-label">Média Cobertura</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="mediaCapacidade">-</div>
+                    <div class="stat-label">Média Capacidade</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="mediaFrequencia">-</div>
+                    <div class="stat-label">Média Frequência</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="desvioCobertura">-</div>
+                    <div class="stat-label">Desvio Cobertura</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="desvioCapacidade">-</div>
+                    <div class="stat-label">Desvio Capacidade</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="desvioFrequencia">-</div>
+                    <div class="stat-label">Desvio Frequência</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Como calcular -->
+        <div class="section" id="explicacaoCalculo" style="display: none;">
+            <h2>Como Calcular</h2>
+            
+            <h3>1. Métricas Básicas</h3>
+            <div class="formula">Cobertura = Paradas ÷ Área</div>
+            <div class="formula">Capacidade = (Lugares × Viagens × Km) ÷ População</div>
+            <div class="formula">Frequência = Viagens</div>
+
+            <h3>2. Normalização</h3>
+            <div class="formula">UX = (Valor - Média) ÷ Desvio Padrão</div>
+
+            <h3>3. Índice OTC</h3>
+            <div class="formula">OTC = UX Cobertura + UX Capacidade + UX Frequência</div>
+
+            <h3>4. Níveis</h3>
+            <div class="nivel-grid">
+                <div class="nivel-item">
+                    <span class="nivel nivel-A">A</span>
+                    <span>Excelente (≥ 2.0)</span>
+                </div>
+                <div class="nivel-item">
+                    <span class="nivel nivel-B">B</span>
+                    <span>Bom (1.0 - 2.0)</span>
+                </div>
+                <div class="nivel-item">
+                    <span class="nivel nivel-C">C</span>
+                    <span>Regular (0.0 - 1.0)</span>
+                </div>
+                <div class="nivel-item">
+                    <span class="nivel nivel-D">D</span>
+                    <span>Ruim (-1.0 - 0.0)</span>
+                </div>
+                <div class="nivel-item">
+                    <span class="nivel nivel-E">E</span>
+                    <span>Muito Ruim (-2.0 - -1.0)</span>
+                </div>
+                <div class="nivel-item">
+                    <span class="nivel nivel-F">F</span>
+                    <span>Péssimo (< -2.0)</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Dados iniciais
+        let linhas = [
+            {nome: "Cajueiro", kmRota: 13.035, paradas: 82, viagens: 8},
+            {nome: "Campus", kmRota: 5.137, paradas: 32, viagens: 101},
+            {nome: "Gancharia", kmRota: 14.054, paradas: 92, viagens: 35},
+            {nome: "Gapara", kmRota: 11.71, paradas: 84, viagens: 38},
+            {nome: "Pianco", kmRota: 11.922, paradas: 72, viagens: 52},
+            {nome: "Vila Maranhao", kmRota: 13.021, paradas: 74, viagens: 9}
+        ];
+
+        // Funções matemáticas
+        function trunc(valor, casas = 3) {
+            if (isNaN(valor) || !isFinite(valor)) return 0;
+            const multiplicador = Math.pow(10, casas);
+            return Math.trunc(valor * multiplicador) / multiplicador;
+        }
+
+        function calcularMedia(valores) {
+            if (!valores || valores.length === 0) return 0;
+            const valoresValidos = valores.filter(v => !isNaN(v) && isFinite(v));
+            if (valoresValidos.length === 0) return 0;
+            return valoresValidos.reduce((sum, val) => sum + val, 0) / valoresValidos.length;
+        }
+
+        function calcularDesvioPadrao(valores) {
+            if (!valores || valores.length <= 1) return 0;
+            const valoresValidos = valores.filter(v => !isNaN(v) && isFinite(v));
+            if (valoresValidos.length <= 1) return 0;
+            
+            const media = calcularMedia(valoresValidos);
+            const variancia = valoresValidos.reduce((sum, val) => sum + Math.pow(val - media, 2), 0) / (valoresValidos.length - 1);
+            const desvio = Math.sqrt(variancia);
+            
+            return isNaN(desvio) || !isFinite(desvio) ? 0 : desvio;
+        }
+
+        function determinarNivel(otc) {
+            if (isNaN(otc) || !isFinite(otc)) return 'F';
+            if (otc >= 2) return 'A';
+            if (otc >= 1) return 'B';
+            if (otc >= 0) return 'C';
+            if (otc >= -1) return 'D';
+            if (otc >= -2) return 'E';
+            return 'F';
+        }
+
+        // Adicionar linha
+        function adicionarLinha() {
+            const nome = document.getElementById('nome').value.trim();
+            const kmRota = parseFloat(document.getElementById('kmRota').value);
+            const paradas = parseInt(document.getElementById('paradas').value);
+            const viagens = parseInt(document.getElementById('viagens').value);
+
+            if (!nome) {
+                alert('Digite o nome da linha.');
+                return;
+            }
+
+            if (isNaN(kmRota) || kmRota <= 0) {
+                alert('Digite um valor válido para Km da Rota.');
+                return;
+            }
+
+            if (isNaN(paradas) || paradas <= 0) {
+                alert('Digite um valor válido para Paradas.');
+                return;
+            }
+
+            if (isNaN(viagens) || viagens <= 0) {
+                alert('Digite um valor válido para Viagens.');
+                return;
+            }
+
+            linhas.push({nome, kmRota, paradas, viagens});
+            
+            document.getElementById('nome').value = '';
+            document.getElementById('kmRota').value = '';
+            document.getElementById('paradas').value = '';
+            document.getElementById('viagens').value = '';
+
+            calcularIndices();
+        }
+
+        // Remover linha
+        function removerLinha(index) {
+            if (index < 0 || index >= linhas.length) return;
+            linhas.splice(index, 1);
+            calcularIndices();
+        }
+
+        // Calcular índices
+        function calcularIndices() {
+            const populacao = parseFloat(document.getElementById('populacao').value);
+            const area = parseFloat(document.getElementById('area').value);
+            const lugares = parseFloat(document.getElementById('lugares').value);
+
+            if (isNaN(populacao) || populacao <= 0) {
+                alert('Digite um valor válido para População.');
+                return;
+            }
+
+            if (isNaN(area) || area <= 0) {
+                alert('Digite um valor válido para Área.');
+                return;
+            }
+
+            if (isNaN(lugares) || lugares <= 0) {
+                alert('Digite um valor válido para Lugares por Veículo.');
+                return;
+            }
+
+            if (linhas.length === 0) {
+                document.getElementById('corpoTabela').innerHTML = 
+                    '<tr><td colspan="13" class="empty-message">Nenhuma linha cadastrada.</td></tr>';
+                document.getElementById('estatisticas').style.display = 'none';
+                document.getElementById('explicacaoCalculo').style.display = 'none';
+                return;
+            }
+
+            // Calcular métricas
+            const resultados = linhas.map(linha => {
+                const cobertura = trunc(linha.paradas / area);
+                const capacidade = trunc((lugares * linha.viagens * linha.kmRota) / populacao);
+                const frequencia = linha.viagens;
+
+                return {
+                    ...linha,
+                    cobertura: isNaN(cobertura) ? 0 : cobertura,
+                    capacidade: isNaN(capacidade) ? 0 : capacidade,
+                    frequencia: isNaN(frequencia) ? 0 : frequencia
+                };
+            });
+
+            const coberturas = resultados.map(r => r.cobertura);
+            const capacidades = resultados.map(r => r.capacidade);
+            const frequencias = resultados.map(r => r.frequencia);
+
+            const mediaCobertura = trunc(calcularMedia(coberturas));
+            const mediaCapacidade = trunc(calcularMedia(capacidades));
+            const mediaFrequencia = trunc(calcularMedia(frequencias));
+
+            const desvioCobertura = trunc(calcularDesvioPadrao(coberturas));
+            const desvioCapacidade = trunc(calcularDesvioPadrao(capacidades));
+            const desvioFrequencia = trunc(calcularDesvioPadrao(frequencias));
+
+            // Caso especial: uma linha
+            if (linhas.length === 1) {
+                const resultado = resultados[0];
+                document.getElementById('corpoTabela').innerHTML = `
+                    <tr>
+                        <td><strong>${resultado.nome}</strong></td>
+                        <td>${resultado.kmRota.toFixed(3)}</td>
+                        <td>${resultado.paradas}</td>
+                        <td>${resultado.viagens}</td>
+                        <td>${resultado.cobertura.toFixed(3)}</td>
+                        <td>${resultado.capacidade.toFixed(3)}</td>
+                        <td>${resultado.frequencia}</td>
+                        <td>0.000</td>
+                        <td>0.000</td>
+                        <td>0.000</td>
+                        <td><strong>0.000</strong></td>
+                        <td><span class="nivel nivel-C">C</span></td>
+                        <td><button class="btn btn-danger" onclick="removerLinha(0)">×</button></td>
+                    </tr>
+                `;
+
+                atualizarEstatisticas(resultado.cobertura, resultado.capacidade, resultado.frequencia, 0, 0, 0);
+                return;
+            }
+
+            // Calcular Z-scores
+            const resultadosFinais = resultados.map(resultado => {
+                let uxCob = 0, uxCap = 0, uxFreq = 0;
+                
+                if (desvioCobertura > 0) {
+                    uxCob = trunc((resultado.cobertura - mediaCobertura) / desvioCobertura);
+                }
+                if (desvioCapacidade > 0) {
+                    uxCap = trunc((resultado.capacidade - mediaCapacidade) / desvioCapacidade);
+                }
+                if (desvioFrequencia > 0) {
+                    uxFreq = trunc((resultado.frequencia - mediaFrequencia) / desvioFrequencia);
+                }
+
+                uxCob = isNaN(uxCob) ? 0 : uxCob;
+                uxCap = isNaN(uxCap) ? 0 : uxCap;
+                uxFreq = isNaN(uxFreq) ? 0 : uxFreq;
+
+                const otc = uxCob + uxCap + uxFreq;
+                const nivel = determinarNivel(otc);
+
+                return {
+                    ...resultado,
+                    uxCob,
+                    uxCap,
+                    uxFreq,
+                    otc: isNaN(otc) ? 0 : otc,
+                    nivel
+                };
+            });
+
+            // Atualizar tabela
+            document.getElementById('corpoTabela').innerHTML = resultadosFinais.map((resultado, index) => `
+                <tr>
+                    <td><strong>${resultado.nome}</strong></td>
+                    <td>${resultado.kmRota.toFixed(3)}</td>
+                    <td>${resultado.paradas}</td>
+                    <td>${resultado.viagens}</td>
+                    <td>${resultado.cobertura.toFixed(3)}</td>
+                    <td>${resultado.capacidade.toFixed(3)}</td>
+                    <td>${resultado.frequencia}</td>
+                    <td>${resultado.uxCob.toFixed(3)}</td>
+                    <td>${resultado.uxCap.toFixed(3)}</td>
+                    <td>${resultado.uxFreq.toFixed(3)}</td>
+                    <td><strong>${resultado.otc.toFixed(3)}</strong></td>
+                    <td><span class="nivel nivel-${resultado.nivel}">${resultado.nivel}</span></td>
+                    <td><button class="btn btn-danger" onclick="removerLinha(${index})">×</button></td>
+                </tr>
+            `).join('');
+
+            atualizarEstatisticas(mediaCobertura, mediaCapacidade, mediaFrequencia, desvioCobertura, desvioCapacidade, desvioFrequencia);
+        }
+
+        function atualizarEstatisticas(mediaCob, mediaCap, mediaFreq, desvioCob, desvioCap, desvioFreq) {
+            document.getElementById('mediaCobertura').textContent = isNaN(mediaCob) ? '0.000' : mediaCob.toFixed(3);
+            document.getElementById('mediaCapacidade').textContent = isNaN(mediaCap) ? '0.000' : mediaCap.toFixed(3);
+            document.getElementById('mediaFrequencia').textContent = isNaN(mediaFreq) ? '0.0' : mediaFreq.toFixed(1);
+            document.getElementById('desvioCobertura').textContent = isNaN(desvioCob) ? '0.000' : desvioCob.toFixed(3);
+            document.getElementById('desvioCapacidade').textContent = isNaN(desvioCap) ? '0.000' : desvioCap.toFixed(3);
+            document.getElementById('desvioFrequencia').textContent = isNaN(desvioFreq) ? '0.000' : desvioFreq.toFixed(3);
+            
+            document.getElementById('estatisticas').style.display = 'block';
+            document.getElementById('explicacaoCalculo').style.display = 'block';
+        }
+
+        // Event listeners
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('btnAdicionar').addEventListener('click', adicionarLinha);
+            
+            ['populacao', 'area', 'lugares'].forEach(id => {
+                const elemento = document.getElementById(id);
+                elemento.addEventListener('input', function() {
+                    clearTimeout(this.timeout);
+                    this.timeout = setTimeout(calcularIndices, 500);
+                });
+                elemento.addEventListener('change', calcularIndices);
+            });
+
+            document.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter' && ['nome', 'kmRota', 'paradas', 'viagens'].includes(e.target.id)) {
+                    adicionarLinha();
+                }
+            });
+            
+            calcularIndices();
+        });
+    </script>
+</body>
+</html>
